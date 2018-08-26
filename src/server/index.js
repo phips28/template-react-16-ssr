@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/server';
+import Helmet from 'react-helmet';
 import { flushChunkNames } from 'react-universal-component/server';
 import flushChunks from 'webpack-flush-chunks';
 import { Provider } from 'react-redux';
@@ -34,14 +35,16 @@ export default ({ clientStats }) => async (req, res) => {
     );
 
     const appString = ReactDOM.renderToString(app);
+    const { title } = Helmet.renderStatic();
     const chunkNames = flushChunkNames();
     const { js, styles, cssHash } = flushChunks(clientStats, { chunkNames });
 
     res.render('index', {
+        title: title.toString(),
         appString,
         js,
         styles,
         cssHash,
-        preloadedState: JSON.stringify(preloadedState)
+        preloadedState: JSON.stringify(preloadedState),
     });
 };
