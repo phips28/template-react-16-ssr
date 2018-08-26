@@ -4,6 +4,8 @@ import shrinkRay from 'shrink-ray';
 import { join } from 'path';
 import { log } from 'winston';
 
+import api from './server/api';
+
 /**
  * Configures hot reloading and assets paths for local development environment.
  * Use the `npm start` command to start the local development server.
@@ -54,6 +56,15 @@ const configureProduction = app => {
 };
 
 const app = express();
+
+/**
+ * Includes the API/express routes as a middleware to enable express routing.
+ * Important: this has to be done before the react routes are configured,
+ * since the react router is supposed to handle all other requests that are
+ * not handles by an api.
+ */
+log('info', 'Configuring express routes...');
+app.use('/api', api);
 
 const isDevelopment = process.env.NODE_ENV === 'development';
 
